@@ -7,9 +7,15 @@ exports["default"] = void 0;
 
 var _vueRouter = require("vue-router");
 
-var _Home = _interopRequireDefault(require("../views/Home.vue"));
+var _store = _interopRequireDefault(require("../store"));
 
-var _UserProfile = _interopRequireDefault(require("../views/UserProfile.vue"));
+var _Home = _interopRequireDefault(require("../views/Home"));
+
+var _UserProfile = _interopRequireDefault(require("../views/UserProfile"));
+
+var _Admin = _interopRequireDefault(require("../views/Admin"));
+
+var _users = require("../assets/users");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -24,7 +30,7 @@ var routes = [{
 }, {
   path: '/admin',
   name: 'Admin',
-  component: 'Admin',
+  component: _Admin["default"],
   meta: {
     requiredAdmin: true
   }
@@ -34,11 +40,22 @@ var router = (0, _vueRouter.createRouter)({
   routes: routes
 });
 router.beforeEach(function _callee(to, from, next) {
-  var isAdmin, requiredAdmin;
+  var user, isAdmin, requiredAdmin;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
+          user = _store["default"].state.User.user;
+
+          if (user) {
+            _context.next = 4;
+            break;
+          }
+
+          _context.next = 4;
+          return regeneratorRuntime.awrap(_store["default"].dispatch('User/setUser', _users.users[0]));
+
+        case 4:
           isAdmin = true;
           requiredAdmin = to.matched.some(function (record) {
             return record.meta.requiredAdmin;
@@ -47,7 +64,7 @@ router.beforeEach(function _callee(to, from, next) {
             name: 'Home'
           });else next();
 
-        case 3:
+        case 7:
         case "end":
           return _context.stop();
       }
